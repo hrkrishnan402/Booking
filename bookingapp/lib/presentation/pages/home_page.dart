@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                   child: Container(
                     height: state is SearchCitySuccessState &&
                             state.searchCityResponse.cities!.isNotEmpty
-                        ? state.searchCityResponse.cities!.length * 30
+                        ? state.searchCityResponse.cities!.length * 70
                         : 100,
                     width: MediaQuery.of(context).size.width - 20,
                     decoration: BoxDecoration(
