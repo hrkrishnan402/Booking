@@ -47,86 +47,106 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Padding _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: BlocBuilder<SearchCityBloc, SearchCityState>(
-        builder: (context, state) {
-          if (state is SearchCitySuccessState &&
-              state.searchCityResponse.cities!.isNotEmpty) {
-            return ListView.builder(
-              itemCount: state.searchCityResponse.cities!.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 50,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey[300],
-                  ),
-                  child: Center(
-                    child: Text(
-                      state.searchCityResponse.cities![index].displayName,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ),
-                );
-              },
-            );
-          } else if (state is SearchCitySuccessState &&
-              state.searchCityResponse.cities!.isEmpty) {
-            return const SizedBox(
-              height: 300,
-              child: Center(
-                  child: Text(
-                "No Cities Found",
-                style: TextStyle(fontSize: 20),
-              )),
-            );
-          } else if (state is SearchCityFailedState) {
-            return const SizedBox(
-              height: 300,
-              child: Text(
-                "Error",
-                style: TextStyle(fontSize: 20),
-              ),
-            );
-          } else if (state is SearchCityLoadingState) {
-            return const SizedBox(
-                height: 300, child: Center(child: CircularProgressIndicator()));
-          }
-          return const SizedBox.shrink();
-        },
-      ),
-    );
+  Widget _buildBody() {
+    return Container();
   }
 
-  Container _buildSearchTextField(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20.0, left: 10.0, right: 10.0),
-      child: TextField(
-        onChanged: (value) {
-          BlocProvider.of<SearchCityBloc>(context)
-              .add(SearchCityKeywordEvent(keyword: value));
-        },
-        decoration: InputDecoration(
-          hintText: 'Search cities / hotels',
-          prefixIcon: const Icon( 
-            Icons.search,
-            color: Colors.black,
+  Widget _buildSearchTextField(BuildContext context) {
+    return BlocBuilder<SearchCityBloc, SearchCityState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+          child: Autocomplete(
+            optionsViewBuilder: (BuildContext context,
+                AutocompleteOnSelected<String> onSelected,
+                Iterable<String> options) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4.0,
+                  child: Container(
+                    height: state is SearchCitySuccessState &&
+                            state.searchCityResponse.cities!.isNotEmpty
+                        ? state.searchCityResponse.cities!.length * 30
+                        : 100,
+                    width: MediaQuery.of(context).size.width - 20,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.grey[200],
+                    ),
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: options.map((String option) {
+                          return ListTile(
+                            title: Text(option),
+                            onTap: () {
+                              onSelected(option);
+                            },
+                          );
+                        }),
+                      ).toList(),
+                    ),
+                  ),
+                ),
+              );
+            },
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text == '') {
+                return const Iterable<String>.empty();
+              } else {
+                List<String> matches = <String>[];
+                if ((state is SearchCitySuccessState &&
+                    state.searchCityResponse.cities!.isNotEmpty)) {
+                  for (var e in state.searchCityResponse.cities!) {
+                    matches.add(e.displayName);
+                  }
+                } else if (state is SearchCitySuccessState &&
+                    state.searchCityResponse.cities!.isEmpty) {
+                  matches.add("No results found");
+                }
+                return matches;
+              }
+            },
+            fieldViewBuilder: (BuildContext context,
+                TextEditingController textEditingController,
+                FocusNode focusNode,
+                VoidCallback onFieldSubmitted) {
+              return TextFormField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                onChanged: (value) {
+                  BlocProvider.of<SearchCityBloc>(context)
+                      .add(SearchCityKeywordEvent(keyword: value));
+                },
+                onFieldSubmitted: (String value) {
+                  // onFieldSubmitted();
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search cities / hotels',
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                    borderSide: BorderSide(
+                      color: Colors.black,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              );
+            },
+            onSelected: (String selection) {
+              print('You just selected $selection');
+            },
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(30.0)),
-            borderSide: BorderSide(
-              color: Colors.black,
-            ),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
