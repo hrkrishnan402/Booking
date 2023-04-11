@@ -2,14 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SignUpTextField extends StatelessWidget {
-  const SignUpTextField({super.key, this.controller, this.hintText});
+  const SignUpTextField({super.key, this.controller, this.hintText, this.validator});
 
   final TextEditingController? controller;
   final String? hintText;
+  final String Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      validator: validator,
         decoration: InputDecoration(
             hintText: hintText,
             enabledBorder: const OutlineInputBorder(
