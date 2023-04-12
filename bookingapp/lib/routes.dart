@@ -1,4 +1,4 @@
-import 'package:bookingapp/presentation/pages/home_page.dart';
+import 'package:bookingapp/presentation/pages/home/home_page.dart';
 
 var routes = {
   "/": (context) => const HomePage(),
