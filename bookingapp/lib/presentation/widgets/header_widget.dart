@@ -10,8 +10,32 @@ class HeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildSiginSignUpnavbar(context),
-        _buildMenuNavBar(context),
+        // Image.asset(
+        //   "assets/logo.png",
+        //   width: 80,
+        // ),
+        // _buildSiginSignUpnavbar(context),
+        // _buildMenuNavBar(context),
+        Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Image.network(
+                'https://example.com/image.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+            Column(
+              children: [
+                _buildSiginSignUpnavbar(context),
+                _buildMenuNavBar(context),
+              ],
+            )
+          ],
+        ),
+
         _buildSearchnavBar(context),
       ],
     );

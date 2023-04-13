@@ -232,7 +232,7 @@ class BookNowWidget extends StatelessWidget {
                 textAlign: TextAlign.left,
                 style: Theme.of(context)
                     .textTheme
-                    .headline3!
+                    .headline2!
                     .copyWith(color: Palette.onTeritiary),
               ),
               const SizedBox(
