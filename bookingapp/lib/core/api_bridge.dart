@@ -8,6 +8,9 @@ import 'package:bookingapp/core/platform/local_storage_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 
+import '../api/request/list_hotels.dart';
+import '../api/response/hoetl_list.response.dart';
+
 /// This class Provides Common Interface for [CommandResourceApi]
 /// , [QueryResourceApi] , [UserResourceApi] and some extra methods
 /// This class may become too large to maintain in the future
@@ -29,6 +32,13 @@ class ApiBridge {
     await _addBaseRequestValues(searchCityRequest);
     return _queryResourceService.fetchCities(searchCityRequest);
   }
+
+  Future<HotelListResponse> fetchHotelList(String keyword) async {
+    ListHotelRequest searchCityRequest = ListHotelRequest(keyword: keyword);
+    await _addBaseRequestValues(searchCityRequest);
+    return _queryResourceService.fetchHotelList(searchCityRequest);
+  }
+
 
   /// This methods Sets the Required BaseRequest Fields
   /// Return Future<void>

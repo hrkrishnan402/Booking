@@ -84,7 +84,7 @@ class HeaderWidget extends StatelessWidget {
                           ),
                         )),
                     const SizedBox(
-                      width: 10.0,
+                      width: 10.0, 
                     ),
                     Flexible(
                         flex: 2,

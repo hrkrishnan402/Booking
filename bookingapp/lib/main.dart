@@ -1,4 +1,5 @@
 import 'package:bookingapp/core/dependency.dart';
+import 'package:bookingapp/presentation/blocs/bloc/listhotels_bloc.dart';
 import 'package:bookingapp/presentation/blocs/search_city/search_city_bloc.dart';
 import 'package:bookingapp/routes.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => SearchCityBloc()),
+        BlocProvider(create: (context) => ListhotelsBloc()),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
