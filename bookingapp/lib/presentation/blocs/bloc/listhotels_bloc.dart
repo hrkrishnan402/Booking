@@ -1,9 +1,11 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:bloc/bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 
 import '../../../api/api_exception.dart';
-import '../../../api/response/hoetl_list.response.dart';
+import '../../../api/response/hotel_list.response.dart';
 import '../../../core/api_bridge.dart';
 
 part 'listhotels_event.dart';

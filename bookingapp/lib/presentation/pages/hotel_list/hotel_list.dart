@@ -1,7 +1,6 @@
-import 'package:dio/dio.dart';
+import 'package:bookingapp/presentation/blocs/bloc/listhotels_bloc.dart';
 import 'package:flutter/material.dart';
-
-import '../../../api/response/export.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HotelListWidget extends StatefulWidget {
   const HotelListWidget({super.key, required this.initDataBloc});
@@ -12,33 +11,36 @@ class HotelListWidget extends StatefulWidget {
 }
 
 class _HotelListWidgetState extends State<HotelListWidget> {
-  Hotel? hotel = Hotel(hotelist: []);
   @override
   void initState() {
     super.initState();
-    initData();
-  }
-
-  Future<void> initData() async {
-    Dio dio = Dio();
-    Response response = await dio.get(
-        "http://bookingappcore-env.eba-xmeutmkw.ap-south-1.elasticbeanstalk.com/hotels?city=207&page=0&required_rooms=0");
-
-    setState(() {
-      hotel = Hotel.fromJson(response.data);
-    });
-    print(hotel?.hotelist);
+    widget.initDataBloc();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: (hotel?.hotelist ?? []).isEmpty
-          ? [const Center(child: Text("Fetching"))]
-          : hotel!.hotelist
-              .map((e) => _buildHotelListTile(
-                  e.hotelName, e.currentPrice, e.availableRooms))
-              .toList(),
+    return BlocBuilder<ListhotelsBloc, ListhotelsState>(
+      builder: (context, state) {
+        if (state is ListHotelsSuccessState &&
+            state.listHotelsResponse.hotels!.isNotEmpty) {
+          return Column(
+            children: state.listHotelsResponse.hotels!
+                .map((hotel) => _buildHotelListTile(
+                    hotel.hotelName, hotel.currentPrice, hotel.availableRooms))
+                .toList(),
+          );
+        } else if (state is ListHotelsSuccessState &&
+            state.listHotelsResponse.hotels!.isEmpty) {
+          return const SizedBox(
+            height: 400,
+            child: Center(child: Text("No Hotels Found")),
+          );
+        }
+        return const SizedBox(
+          height: 300,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      },
     );
   }
 
@@ -51,15 +53,15 @@ class _HotelListWidgetState extends State<HotelListWidget> {
             padding: const EdgeInsets.all(16.0),
             child: Card(
                 child: Row(children: [
-              hotelPreviewImage(availableRooms),
-              hotelAddress(hotelName),
-              bookingInfo(),
+              _buildHotelPreviewImage(availableRooms),
+              _buildHotelAddress(hotelName),
+              _buildBookingInfo(),
             ])),
           )),
     );
   }
 
-  Widget bookingInfo() {
+  Widget _buildBookingInfo() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child:
@@ -85,7 +87,7 @@ class _HotelListWidgetState extends State<HotelListWidget> {
     );
   }
 
-  Widget hotelAddress(String hotelName) {
+  Widget _buildHotelAddress(String hotelName) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -117,7 +119,7 @@ class _HotelListWidgetState extends State<HotelListWidget> {
     );
   }
 
-  Stack hotelPreviewImage(int availableRooms) {
+  Stack _buildHotelPreviewImage(int availableRooms) {
     return Stack(
       children: [
         Positioned(

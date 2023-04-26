@@ -1,17 +1,5 @@
 class Hotel {
   Hotel({
-    required this.hotelist,
-  });
-
-  List<Hotelist> hotelist;
-
-  factory Hotel.fromJson(List<dynamic> json) => Hotel(
-        hotelist: List<Hotelist>.from(json.map((x) => Hotelist.fromJson(x))),
-      );
-}
-
-class Hotelist {
-  Hotelist({
     required this.hotelId,
     required this.hotelName,
     required this.currentPrice,
@@ -25,7 +13,7 @@ class Hotelist {
   int availableRooms;
   bool available;
 
-  factory Hotelist.fromJson(Map<String, dynamic> json) => Hotelist(
+  factory Hotel.fromJson(Map<String, dynamic> json) => Hotel(
         hotelId: json["hotelId"],
         hotelName: json["hotelName"],
         currentPrice: json["currentPrice"],

@@ -2,6 +2,7 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:bookingapp/api/api_exception.dart';
+import 'package:bookingapp/api/response/model/city.dart';
 import 'package:bookingapp/api/response/search_city_response.dart';
 import 'package:bookingapp/core/api_bridge.dart';
 import 'package:get_it/get_it.dart';
@@ -19,9 +20,12 @@ class SearchCityBloc extends Bloc<SearchCityEvent, SearchCityState> {
           emit(SearchCityLoadingState());
           SearchCityResponse searchCityResponse =
               await apiBridge.fetchCities(event.keyword);
-          emit(SearchCitySuccessState(searchCityResponse: searchCityResponse));
+          emit(SearchCitySuccessState(
+              searchCityResponse: searchCityResponse,
+              selectedCity: searchCityResponse.cities![0]));
         } on ApiException catch (e) {
-          emit(SearchCityFailedState(statusCode: e.code, message: e.toString()));
+          emit(
+              SearchCityFailedState(statusCode: e.code, message: e.toString()));
         }
       },
     );

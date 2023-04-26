@@ -9,7 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 
 import '../api/request/list_hotels.dart';
-import '../api/response/hoetl_list.response.dart';
+import '../api/response/hotel_list.response.dart';
 
 /// This class Provides Common Interface for [CommandResourceApi]
 /// , [QueryResourceApi] , [UserResourceApi] and some extra methods

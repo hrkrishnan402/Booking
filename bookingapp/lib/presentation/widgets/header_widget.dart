@@ -1,21 +1,21 @@
+import 'package:bookingapp/api/response/model/city.dart';
 import 'package:bookingapp/core/constant/palette.dart';
+import 'package:bookingapp/presentation/blocs/bloc/listhotels_bloc.dart';
+import 'package:bookingapp/presentation/blocs/search_city/search_city_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({
+  HeaderWidget({
     Key? key,
   }) : super(key: key);
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Image.asset(
-        //   "assets/logo.png",
-        //   width: 80,
-        // ),
-        // _buildSiginSignUpnavbar(context),
-        // _buildMenuNavBar(context),
         Stack(
           children: [
             Positioned(
@@ -35,7 +35,6 @@ class HeaderWidget extends StatelessWidget {
             )
           ],
         ),
-
         _buildSearchnavBar(context),
       ],
     );
@@ -59,36 +58,14 @@ class HeaderWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Flexible(
-                        flex: 1,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: 'Enter city',
-                            hintStyle: const TextStyle(
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(2.0),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                        )),
+                    Flexible(flex: 1, child: _buildCityDropdownSearchBar()),
                     const SizedBox(
-                      width: 10.0, 
+                      width: 10.0,
                     ),
                     Flexible(
                         flex: 2,
                         child: TextField(
+                          controller: searchController,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,
@@ -123,13 +100,123 @@ class HeaderWidget extends StatelessWidget {
                                 vertical: 26.0), // set the horizontal padding
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          //      BlocProvider.of<ListhotelsBloc>(context)
+                          // .add(GetHotelListEvent(keyword: "207"));
+                        },
                         child: const Text("SEARCH"))
                   ]),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCityDropdownSearchBar() {
+    return BlocBuilder<SearchCityBloc, SearchCityState>(
+      builder: (context, state) {
+        return SizedBox(
+          child: Autocomplete(
+            optionsViewBuilder: (BuildContext context,
+                AutocompleteOnSelected<City> onSelected,
+                Iterable<City> options) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4.0,
+                  child: Container(
+                    height: state is SearchCitySuccessState &&
+                            state.searchCityResponse.cities!.isNotEmpty
+                        ? state.searchCityResponse.cities!.length * 30
+                        : 100,
+                    width: MediaQuery.of(context).size.width / 2 - 10,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.grey[200],
+                    ),
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: options.map((City option) {
+                          return ListTile(
+                            title: Text(option.displayName),
+                            onTap: () {
+                              onSelected(option);
+                            },
+                          );
+                        }),
+                      ).toList(),
+                    ),
+                  ),
+                ),
+              );
+            },
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text == '') {
+                return const Iterable<City>.empty();
+              } else {
+                List<City> matches = <City>[];
+                if ((state is SearchCitySuccessState &&
+                    state.searchCityResponse.cities!.isNotEmpty)) {
+                  for (var e in state.searchCityResponse.cities!) {
+                    matches.add(City(
+                        displayName: e.displayName, id: e.id, type: e.type));
+                  }
+                } else if (state is SearchCitySuccessState &&
+                    state.searchCityResponse.cities!.isEmpty) {
+                  matches.add(
+                      City(displayName: "No Results Found", id: 0, type: ""));
+                }
+                return matches;
+              }
+            },
+            fieldViewBuilder: (BuildContext context,
+                TextEditingController textEditingController,
+                FocusNode focusNode,
+                VoidCallback onFieldSubmitted) {
+              return TextFormField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                onChanged: (value) {
+                  BlocProvider.of<SearchCityBloc>(context)
+                      .add(SearchCityKeywordEvent(keyword: value));
+                },
+                onFieldSubmitted: (String value) {
+                  // onFieldSubmitted();
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: state is SearchCitySuccessState
+                      ? state.selectedCity.displayName
+                      : 'Enter city',
+                  hintStyle: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(2.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(2.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(2.0),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              );
+            },
+            onSelected: (selection) {
+              BlocProvider.of<ListhotelsBloc>(context)
+                  .add(GetHotelListEvent(keyword: selection.id.toString()));
+            },
+          ),
+        );
+      },
     );
   }
 
