@@ -234,7 +234,9 @@ class HeaderWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                          Navigator.pushNamed(context, "/");
+                      },
                       child: Text(
                         "Home",
                         style: Theme.of(context)
@@ -256,7 +258,9 @@ class HeaderWidget extends StatelessWidget {
                     width: 10.0,
                   ),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, "hotels");
+                      },
                       child: Text("Hotels",
                           style: Theme.of(context)
                               .textTheme

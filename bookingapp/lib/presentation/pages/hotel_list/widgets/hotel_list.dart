@@ -1,3 +1,4 @@
+import 'package:bookingapp/core/constant/palette.dart';
 import 'package:bookingapp/presentation/blocs/bloc/listhotels_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +53,8 @@ class _HotelListWidgetState extends State<HotelListWidget> {
       itemBuilder: ((context, index) => Padding(
             padding: const EdgeInsets.all(16.0),
             child: Card(
-                child: Row(children: [
+                child: Row(
+                  children: [
               _buildHotelPreviewImage(availableRooms),
               _buildHotelAddress(hotelName),
               _buildBookingInfo(),
@@ -70,15 +72,20 @@ class _HotelListWidgetState extends State<HotelListWidget> {
           "Price Per night",
           style: TextStyle(color: Colors.grey),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 6.0),
-          child: Text("650"),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6.0),
+          child: Text(
+            "650",
+            style: Theme.of(context).textTheme.headline5!.copyWith(
+                fontWeight: FontWeight.bold, color: Palette.secondary),
+          ),
         ),
         TextButton(
           onPressed: () {
             widget.initDataBloc();
           },
           style: TextButton.styleFrom(
+            foregroundColor: Colors.black,
             backgroundColor: Colors.yellow[600],
           ),
           child: const Text("Book Now"),
@@ -102,6 +109,10 @@ class _HotelListWidgetState extends State<HotelListWidget> {
                   child: Center(
                       child: Text(
                     hotelName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6!
+                        .copyWith(fontWeight: FontWeight.bold),
                   )),
                 ),
                 Padding(
@@ -143,13 +154,23 @@ class _HotelListWidgetState extends State<HotelListWidget> {
     );
   }
 
-  Widget locationAndPhoneIcons(IconData icon, String addressOrPhone) => Row(
+  Widget locationAndPhoneIcons(
+    IconData icon,
+    String addressOrPhone,
+  ) =>
+      Row(
         children: [
           Icon(
             icon,
             color: Colors.grey,
           ),
-          Text(addressOrPhone)
+          Text(
+            addressOrPhone,
+            style: Theme.of(context)
+                .textTheme
+                .subtitle2!
+                .copyWith(fontWeight: FontWeight.bold),
+          )
         ],
       );
 }
