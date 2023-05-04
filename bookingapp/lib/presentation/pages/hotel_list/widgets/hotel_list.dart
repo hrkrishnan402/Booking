@@ -52,13 +52,18 @@ class _HotelListWidgetState extends State<HotelListWidget> {
       itemCount: 3,
       itemBuilder: ((context, index) => Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Card(
-                child: Row(
-                  children: [
-              _buildHotelPreviewImage(availableRooms),
-              _buildHotelAddress(hotelName),
-              _buildBookingInfo(),
-            ])),
+            child: InkWell(
+              onTap: (){
+                Navigator.pushNamed(context, "hotel-details");
+              },
+              child: Card(
+                  child: Row(
+                    children: [
+                _buildHotelPreviewImage(availableRooms),
+                _buildHotelAddress(hotelName),
+                _buildBookingInfo(),
+              ])),
+            ),
           )),
     );
   }
