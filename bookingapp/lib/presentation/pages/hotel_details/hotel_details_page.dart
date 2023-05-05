@@ -1,5 +1,6 @@
 import 'package:bookingapp/core/constant/palette.dart';
-import 'package:bookingapp/presentation/blocs/bloc/listhotels_bloc.dart';
+import 'package:bookingapp/presentation/blocs/hotel_details/hotel_details_bloc.dart';
+import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
 import 'package:bookingapp/presentation/pages/hotel_details/widgets/help_support.dart';
 import 'package:bookingapp/presentation/pages/hotel_details/widgets/hotel_ameinities.dart';
 import 'package:bookingapp/presentation/pages/hotel_details/widgets/popular_packages.dart';
@@ -17,18 +18,45 @@ class HotelDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments;
+    // Extract the hotelId from the arguments
+    final hotelId = arguments as int;
+    BlocProvider.of<HotelDetailsBloc>(context)
+        .add(FetchHotelDetailsEvent(hotelId: hotelId));
     return Scaffold(
       backgroundColor: Colors.grey,
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max, children: [
-          HeaderWidget(),
-          _buildHotelImageHeader(context),
-          _buildHotelInfoNavBar(context),
-          _buildHotelDetailsBodySection(context)
-        ]),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              HeaderWidget(),
+              BlocBuilder<HotelDetailsBloc, HotelDetailsState>(
+                builder: (context, state) {
+                  if (state is HotelDetailsSuccessState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        _buildHotelImageHeader(context ,state.hotelDetailsResponse.hotelName,"" ),
+                        _buildHotelInfoNavBar(context),
+                        _buildHotelDetailsBodySection(context)
+                      ],
+                    );
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: const [
+                     CircularProgressIndicator()
+                    ],
+                  );
+                },
+              )
+            ]),
       ),
     );
   }
@@ -113,7 +141,7 @@ class HotelDetailsPage extends StatelessWidget {
     );
   }
 
-  Container _buildHotelImageHeader(BuildContext context) {
+  Container _buildHotelImageHeader(BuildContext context , String? name , String address) {
     return Container(
       height: 350,
       color: Palette.teritiary,
@@ -128,7 +156,7 @@ class HotelDetailsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Universal Luxury Grand Hotel",
+                  name.toString(),
                   style: Theme.of(context)
                       .textTheme
                       .headline5!
@@ -227,18 +255,21 @@ class HotelDetailsPage extends StatelessWidget {
                   child: ReviewBox())
             ]),
           ),
-          const SizedBox(width: 10.0,),
+          const SizedBox(
+            width: 10.0,
+          ),
           Container(
-            width: MediaQuery.of(context).size.width/5,
+            width: MediaQuery.of(context).size.width / 5,
             margin: const EdgeInsets.only(top: 200.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children:  [
-              const TripInformation(),
-              const HelpAndSupport(),
-              PopularPackages()
-            ],),
+              children: [
+                const TripInformation(),
+                const HelpAndSupport(),
+                PopularPackages()
+              ],
+            ),
           )
         ],
       ),

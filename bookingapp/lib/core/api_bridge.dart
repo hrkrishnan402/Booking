@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:bookingapp/api/request/base_request.dart';
+import 'package:bookingapp/api/request/hotel_details_request.dart';
 import 'package:bookingapp/api/request/search_city_request.dart';
+import 'package:bookingapp/api/response/hotel_details_response.dart';
 import 'package:bookingapp/api/response/search_city_response.dart';
 import 'package:bookingapp/api/services/interface/iquery_resource_service.dart';
 import 'package:bookingapp/core/platform/local_storage_service.dart';
@@ -37,6 +39,14 @@ class ApiBridge {
     ListHotelRequest searchCityRequest = ListHotelRequest(keyword: keyword);
     await _addBaseRequestValues(searchCityRequest);
     return _queryResourceService.fetchHotelList(searchCityRequest);
+  }
+
+ Future<HotelDetailsResponse> fetchHotelDetails(int hotelId) async {
+    HotelDetailsRequest hotelDetailsRequest = HotelDetailsRequest(hotelId: hotelId, adults: 1,
+    
+    children: 0,count: 1,fromDate: "",toDate: "");
+    await _addBaseRequestValues(hotelDetailsRequest);
+    return _queryResourceService.fetchHotelDetails(hotelDetailsRequest);
   }
 
 

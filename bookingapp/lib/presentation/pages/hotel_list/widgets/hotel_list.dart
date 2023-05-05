@@ -1,5 +1,5 @@
 import 'package:bookingapp/core/constant/palette.dart';
-import 'package:bookingapp/presentation/blocs/bloc/listhotels_bloc.dart';
+import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,7 +26,7 @@ class _HotelListWidgetState extends State<HotelListWidget> {
             state.listHotelsResponse.hotels!.isNotEmpty) {
           return Column(
             children: state.listHotelsResponse.hotels!
-                .map((hotel) => _buildHotelListTile(
+                .map((hotel) => _buildHotelListTile(hotel.hotelId,
                     hotel.hotelName, hotel.currentPrice, hotel.availableRooms))
                 .toList(),
           );
@@ -46,19 +46,18 @@ class _HotelListWidgetState extends State<HotelListWidget> {
   }
 
   Widget _buildHotelListTile(
-      String hotelName, int currentPrice, int availableRooms) {
+      int hotelId, String hotelName, int currentPrice, int availableRooms) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: 3,
       itemBuilder: ((context, index) => Padding(
             padding: const EdgeInsets.all(16.0),
             child: InkWell(
-              onTap: (){
-                Navigator.pushNamed(context, "hotel-details");
+              onTap: () {
+                Navigator.pushNamed(context, "hotel-details", arguments: hotelId);
               },
               child: Card(
-                  child: Row(
-                    children: [
+                  child: Row(children: [
                 _buildHotelPreviewImage(availableRooms),
                 _buildHotelAddress(hotelName),
                 _buildBookingInfo(),

@@ -1,10 +1,10 @@
 import 'package:bookingapp/core/constant/palette.dart';
+import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
 import 'package:bookingapp/presentation/blocs/search_city/search_city_bloc.dart';
 import 'package:bookingapp/presentation/pages/hotel_list/widgets/hotel_list.dart';
 import 'package:bookingapp/presentation/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../blocs/bloc/listhotels_bloc.dart';
 
 class HotelListPage extends StatelessWidget {
   const HotelListPage({Key? key}) : super(key: key);

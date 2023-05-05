@@ -1,6 +1,6 @@
 import 'package:bookingapp/api/response/model/city.dart';
 import 'package:bookingapp/core/constant/palette.dart';
-import 'package:bookingapp/presentation/blocs/bloc/listhotels_bloc.dart';
+import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
 import 'package:bookingapp/presentation/blocs/search_city/search_city_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
