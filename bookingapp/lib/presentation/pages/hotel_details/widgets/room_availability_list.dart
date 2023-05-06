@@ -1,9 +1,12 @@
+import 'package:bookingapp/api/response/hotel_details_response.dart';
 import 'package:bookingapp/core/constant/palette.dart';
 import 'package:flutter/material.dart';
 
 class RoomAvailabilityList extends StatefulWidget {
-  const RoomAvailabilityList({super.key, required this.initDataBloc});
-  final Function initDataBloc;
+  final HotelDetailsResponse hotelDetailsResponse;
+  const RoomAvailabilityList(
+      {super.key,
+      required this.hotelDetailsResponse});
 
   @override
   State<RoomAvailabilityList> createState() => _RoomAvailabilityListState();
@@ -13,41 +16,17 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
   @override
   void initState() {
     super.initState();
-    widget.initDataBloc();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> hotelRooms = [
-      {
-        "url": "https://picsum.photos/id/1005/1280/792",
-        "amenities": ["Free WiFi", "Air conditioning", "Mini fridge"],
-        "includes": ["Breakfast", "Parking", "Pool access"],
-        "maximum": 2,
-        "name": "Cozy Double Room",
-      },
-      {
-        "url": "https://picsum.photos/id/1011/1280/792",
-        "amenities": ["Flat-screen TV", "Kitchenette", "Balcony"],
-        "includes": ["Gym access", "Airport shuttle", "Late checkout"],
-        "maximum": 4,
-        "name": "Deluxe Family Suite",
-      },
-      {
-        "url": "https://picsum.photos/id/1015/1280/792",
-        "amenities": ["Private bathroom", "Safe", "Desk"],
-        "includes": ["Room service", "Concierge", "Laundry"],
-        "maximum": 3,
-        "name": "Executive King Room",
-      }
-    ];
 
     return Column(
-      children: hotelRooms.map((room) => _buildRoomListTile(room)).toList(),
+      children: widget.hotelDetailsResponse.rooms!.map((room) => _buildRoomListTile(room)).toList(),
     );
   }
 
-  Widget _buildRoomListTile(room) {
+  Widget _buildRoomListTile(Rooms room) {
     return Padding(
       padding: const EdgeInsets.all(0.0),
       child: InkWell(
@@ -58,7 +37,7 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: Row(children: [
-                _buildRoomPreviewImage(room["url"]),
+                _buildRoomPreviewImage(room.displayImages![0]),
                 const SizedBox(
                   width: 10.0,
                 ),
@@ -71,23 +50,23 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 10.0),
                         child: Text(
-                          room['name'],
+                          room.roomTitle.toString(),
                           style: Theme.of(context)
                               .textTheme
                               .headline6!
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      _buildHotelAmnieties(room["amenities"]),
+                      _buildHotelAmnieties(["Flat-screen TV", "Kitchenette", "Balcony"]),
                       const SizedBox(
                         height: 8.0,
                       ),
-                      _buildHotelIncludes(room["includes"]),
-                      _buildMaximumPerson(room['maximum'])
+                      _buildHotelIncludes(["Gym access", "Airport shuttle", "Late checkout"]),
+                      _buildMaximumPerson(4)
                     ],
                   ),
                 ),
-                _buildBookingInfo()
+                _buildBookingInfo(room)
               ]),
             )),
       ),
@@ -160,7 +139,7 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
     );
   }
 
-  Widget _buildBookingInfo() {
+  Widget _buildBookingInfo(Rooms room) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child:
@@ -172,14 +151,14 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 6.0),
           child: Text(
-            "650",
+            room.currentPrice.toString(),
             style: Theme.of(context).textTheme.headline5!.copyWith(
                 fontWeight: FontWeight.bold, color: Palette.secondary),
           ),
         ),
         TextButton(
           onPressed: () {
-            widget.initDataBloc();
+           
           },
           style: TextButton.styleFrom(
             foregroundColor: Colors.black,

@@ -1,26 +1,17 @@
+import 'package:bookingapp/api/response/hotel_details_response.dart';
 import 'package:bookingapp/core/constant/palette.dart';
 import 'package:flutter/material.dart';
 
 class ImageSlideShow extends StatefulWidget {
-  ImageSlideShow({Key? key}) : super(key: key);
+  final HotelDetailsResponse hotelDetailsResponse;
+  ImageSlideShow({Key? key , required this.hotelDetailsResponse}) : super(key: key);
 
   @override
   State<ImageSlideShow> createState() => _ImageSlideShowState();
 }
 
 class _ImageSlideShowState extends State<ImageSlideShow> {
-  List<String> assets = [
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-    "https://picsum.photos/id/520/300/300",
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +23,7 @@ class _ImageSlideShowState extends State<ImageSlideShow> {
             image: DecorationImage(
               fit: BoxFit.cover,
                 image: NetworkImage(
-              "https://picsum.photos/id/800/480/300",
+              widget.hotelDetailsResponse.displayImages![0],
             ))),
         child: Stack(children: [
           Align(
@@ -56,7 +47,7 @@ class _ImageSlideShowState extends State<ImageSlideShow> {
           child: ListView(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            children: assets
+            children:  widget.hotelDetailsResponse.displayImages!
                 .map((e) => Container(
                       color: Palette.teritiary,
                       margin: const EdgeInsets.only(right: 10.0),

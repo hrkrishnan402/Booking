@@ -1,3 +1,4 @@
+import 'package:bookingapp/api/response/hotel_details_response.dart';
 import 'package:bookingapp/core/constant/palette.dart';
 import 'package:bookingapp/presentation/blocs/hotel_details/hotel_details_bloc.dart';
 import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
@@ -40,19 +41,20 @@ class HotelDetailsPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        _buildHotelImageHeader(context ,state.hotelDetailsResponse.hotelName,"" ),
-                        _buildHotelInfoNavBar(context),
-                        _buildHotelDetailsBodySection(context)
+                        _buildHotelImageHeader(
+                            context, state.hotelDetailsResponse.hotelName, ""),
+                        _buildHotelInfoNavBar(
+                            context, state.hotelDetailsResponse),
+                        _buildHotelDetailsBodySection(
+                            context, state.hotelDetailsResponse)
                       ],
                     );
                   }
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
-                    children: const [
-                     CircularProgressIndicator()
-                    ],
+                    children: const [CircularProgressIndicator()],
                   );
                 },
               )
@@ -61,7 +63,8 @@ class HotelDetailsPage extends StatelessWidget {
     );
   }
 
-  Container _buildHotelInfoNavBar(BuildContext context) {
+  Container _buildHotelInfoNavBar(
+      BuildContext context, HotelDetailsResponse hotelDetailsResponse) {
     return Container(
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 200),
@@ -141,7 +144,8 @@ class HotelDetailsPage extends StatelessWidget {
     );
   }
 
-  Container _buildHotelImageHeader(BuildContext context , String? name , String address) {
+  Container _buildHotelImageHeader(
+      BuildContext context, String? name, String address) {
     return Container(
       height: 350,
       color: Palette.teritiary,
@@ -176,7 +180,8 @@ class HotelDetailsPage extends StatelessWidget {
     );
   }
 
-  Container _buildHotelDetailsBodySection(BuildContext context) {
+  Container _buildHotelDetailsBodySection(
+      BuildContext context, HotelDetailsResponse hotelDetailsResponse) {
     return Container(
       color: Palette.onSecondary,
       margin: const EdgeInsets.symmetric(horizontal: 140),
@@ -189,7 +194,7 @@ class HotelDetailsPage extends StatelessWidget {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
-                "Universal Luxury Grand Hotel",
+                hotelDetailsResponse.hotelName.toString(),
                 style: Theme.of(context)
                     .textTheme
                     .headline4!
@@ -203,7 +208,7 @@ class HotelDetailsPage extends StatelessWidget {
                 height: 40,
               ),
               Text(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
+                hotelDetailsResponse.description.toString(),
                 overflow: TextOverflow.clip,
                 style: Theme.of(context)
                     .textTheme
@@ -217,7 +222,7 @@ class HotelDetailsPage extends StatelessWidget {
               const SizedBox(
                 height: 40,
               ),
-              ImageSlideShow(),
+              ImageSlideShow(hotelDetailsResponse: hotelDetailsResponse),
               const SizedBox(
                 height: 60,
               ),
@@ -233,10 +238,9 @@ class HotelDetailsPage extends StatelessWidget {
               const SizedBox(
                 height: 40,
               ),
-              RoomAvailabilityList(initDataBloc: () {
-                BlocProvider.of<ListhotelsBloc>(context)
-                    .add(GetHotelListEvent(keyword: "207"));
-              }),
+              RoomAvailabilityList(
+                hotelDetailsResponse: hotelDetailsResponse,
+              ),
               const SizedBox(
                 height: 60,
               ),
