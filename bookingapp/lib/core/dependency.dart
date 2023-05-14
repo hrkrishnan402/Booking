@@ -1,5 +1,7 @@
 import 'package:bookingapp/api/services/interface/iquery_resource_service.dart';
+import 'package:bookingapp/api/services/interface/iuser_resource_service.dart';
 import 'package:bookingapp/api/services/v1/query_resource_service.dart';
+import 'package:bookingapp/api/services/v1/user_resource_service.dart';
 import 'package:bookingapp/core/api_bridge.dart';
 import 'package:bookingapp/core/platform/local_storage_service.dart';
 import 'package:bookingapp/core/platform/package_info_service.dart';
@@ -25,5 +27,6 @@ Future<void> setupDependencies() async {
   getIt.registerSingleton<Util>(Util());
   // getIt.registerSingleton<NetworkConnectionService>(networkConnectionService);
   getIt.registerSingleton<IQueryResourceService>(QueryResourceService());
+  getIt.registerSingleton<IUserResourceService>(UserResourceService());
   getIt.registerSingleton<ApiBridge>(ApiBridge());
 }
