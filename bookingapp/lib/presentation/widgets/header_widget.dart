@@ -1,7 +1,9 @@
 import 'package:bookingapp/api/response/model/city.dart';
 import 'package:bookingapp/core/constant/palette.dart';
 import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
+import 'package:bookingapp/presentation/blocs/login/login_bloc.dart';
 import 'package:bookingapp/presentation/blocs/search_city/search_city_bloc.dart';
+import 'package:bookingapp/presentation/pages/auth/auth_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,15 +20,16 @@ class HeaderWidget extends StatelessWidget {
       children: [
         Stack(
           children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Image.network(
-                'https://example.com/image.jpg',
-                fit: BoxFit.cover,
-              ),
-            ),
+            // Positioned(
+            //   top: 0,
+            //   left: 0,
+            //   right: 0,
+            //   child: Image.network(
+            //     'https://example.com/image.jpg',
+
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
             Column(
               children: [
                 _buildSiginSignUpnavbar(context),
@@ -235,7 +238,7 @@ class HeaderWidget extends StatelessWidget {
                 children: [
                   TextButton(
                       onPressed: () {
-                          Navigator.pushNamed(context, "/");
+                        Navigator.pushNamed(context, "/");
                       },
                       child: Text(
                         "Home",
@@ -293,44 +296,103 @@ class HeaderWidget extends StatelessWidget {
     );
   }
 
-  Container _buildSiginSignUpnavbar(BuildContext context) {
-    return Container(
-      color: Palette.HEADER_AUTH_COLOR,
-      height: 30,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 8),
-        child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Palette.HEADER_SIGNIN_BTN_COLOR),
-                elevation: MaterialStateProperty.all<double>(0.0),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(0.0), // set the border radius
-                  ),
-                ),
+  Widget _buildSiginSignUpnavbar(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, state) {
+        if (state is LoginSuccessState) {
+          return SizedBox(
+            height: 30,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Palette.HEADER_SIGNIN_BTN_COLOR),
+                        elevation: MaterialStateProperty.all<double>(0.0),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                0.0), // set the border radius
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        BlocProvider.of<LoginBloc>(context).add(LogoutEvent());
+                      },
+                      child: const Text("Logout")),
+                ],
               ),
-              onPressed: () {},
-              child: const Text("Sign In")),
-          ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Palette.HEADER_SIGNUP_BTN_COLOR),
-                elevation: MaterialStateProperty.all<double>(0.0),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(0.0), // set the border radius
+            ),
+          );
+        }
+        return Container(
+          color: Palette.HEADER_AUTH_COLOR,
+          height: 30,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width / 8),
+            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Palette.HEADER_SIGNIN_BTN_COLOR),
+                    elevation: MaterialStateProperty.all<double>(0.0),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(0.0), // set the border radius
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              onPressed: () {},
-              child: const Text("Sign Up")),
-        ]),
-      ),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return Dialog(
+                              child: SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: AuthPage(
+                                    index: 1,
+                                  )));
+                        });
+                  },
+                  child: const Text("Sign In")),
+              ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Palette.HEADER_SIGNUP_BTN_COLOR),
+                    elevation: MaterialStateProperty.all<double>(0.0),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(0.0), // set the border radius
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                              child: SizedBox(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: AuthPage(
+                                    index: 0,
+                                  )));
+                        });
+                  },
+                  child: const Text("Sign Up")),
+            ]),
+          ),
+        );
+      },
     );
   }
 }

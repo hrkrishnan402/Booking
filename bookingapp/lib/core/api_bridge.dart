@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:bookingapp/api/request/base_request.dart';
+import 'package:bookingapp/api/request/bookroom_request.dart';
 import 'package:bookingapp/api/request/hotel_details_request.dart';
 import 'package:bookingapp/api/request/login_request.dart';
 import 'package:bookingapp/api/request/search_city_request.dart';
 import 'package:bookingapp/api/request/signup_request.dart';
+import 'package:bookingapp/api/response/booking_response.dart';
 import 'package:bookingapp/api/response/hotel_details_response.dart';
 import 'package:bookingapp/api/response/login_response.dart';
 import 'package:bookingapp/api/response/search_city_response.dart';
@@ -28,7 +30,7 @@ class ApiBridge {
       GetIt.I.get<LocalStorageService>();
   IQueryResourceService _queryResourceService =
       GetIt.I.get<IQueryResourceService>();
-  IUserResourceService _userResourceService =
+  final IUserResourceService _userResourceService =
       GetIt.I.get<IUserResourceService>();
   ApiBridge();
 
@@ -73,8 +75,17 @@ class ApiBridge {
   Future<LoginResponse> login(String phone, String password) async {
     LoginRequest loginRequest = LoginRequest(password: password, phone: phone);
     await _addBaseRequestValues(loginRequest);
-    //Save Login values to LocalStorage
-    return _userResourceService.login(loginRequest);
+    LoginResponse loginResponse =
+        await _userResourceService.login(loginRequest);
+    await _localStorageService.setItem("jwt", loginResponse.jwt.toString());
+    return loginResponse;
+  }
+
+  Future<BookRoomResponse> bookRoom(int roomId, String date) async {
+    BookroomRequest bookroomRequest =
+        BookroomRequest(roomId: roomId, date: date);
+    await _addBaseRequestValues(bookroomRequest);
+    return await _userResourceService.bookRoom(bookroomRequest);
   }
 
   /// This methods Sets the Required BaseRequest Fields

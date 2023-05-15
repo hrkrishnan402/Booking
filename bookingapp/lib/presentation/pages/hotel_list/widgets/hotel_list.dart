@@ -86,7 +86,7 @@ class _HotelListWidgetState extends State<HotelListWidget> {
         ),
         TextButton(
           onPressed: () {
-            widget.initDataBloc();
+            // widget.initDataBloc();
           },
           style: TextButton.styleFrom(
             foregroundColor: Colors.black,

@@ -1,12 +1,15 @@
 import 'package:bookingapp/api/response/hotel_details_response.dart';
 import 'package:bookingapp/core/constant/palette.dart';
+import 'package:bookingapp/presentation/blocs/book_room/book_room_bloc.dart';
+import 'package:bookingapp/presentation/blocs/login/login_bloc.dart';
+import 'package:bookingapp/presentation/pages/auth/auth_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class RoomAvailabilityList extends StatefulWidget {
   final HotelDetailsResponse hotelDetailsResponse;
-  const RoomAvailabilityList(
-      {super.key,
-      required this.hotelDetailsResponse});
+  const RoomAvailabilityList({super.key, required this.hotelDetailsResponse});
 
   @override
   State<RoomAvailabilityList> createState() => _RoomAvailabilityListState();
@@ -20,13 +23,15 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
-      children: widget.hotelDetailsResponse.rooms!.map((room) => _buildRoomListTile(room)).toList(),
+      children: widget.hotelDetailsResponse.rooms!
+          .map((room) => _buildRoomListTile(room))
+          .toList(),
     );
   }
 
   Widget _buildRoomListTile(Rooms room) {
+    BookRoomBloc bookRoomBloc = BookRoomBloc();
     return Padding(
       padding: const EdgeInsets.all(0.0),
       child: InkWell(
@@ -57,16 +62,18 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      _buildHotelAmnieties(["Flat-screen TV", "Kitchenette", "Balcony"]),
+                      _buildHotelAmnieties(
+                          ["Flat-screen TV", "Kitchenette", "Balcony"]),
                       const SizedBox(
                         height: 8.0,
                       ),
-                      _buildHotelIncludes(["Gym access", "Airport shuttle", "Late checkout"]),
+                      _buildHotelIncludes(
+                          ["Gym access", "Airport shuttle", "Late checkout"]),
                       _buildMaximumPerson(4)
                     ],
                   ),
                 ),
-                _buildBookingInfo(room)
+                _buildBookingInfo(room, bookRoomBloc)
               ]),
             )),
       ),
@@ -139,7 +146,7 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
     );
   }
 
-  Widget _buildBookingInfo(Rooms room) {
+  Widget _buildBookingInfo(Rooms room, BookRoomBloc bookRoomBloc) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child:
@@ -156,15 +163,49 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
                 fontWeight: FontWeight.bold, color: Palette.secondary),
           ),
         ),
-        TextButton(
-          onPressed: () {
-           
+        BlocConsumer<BookRoomBloc, BookRoomState>(
+          bloc: bookRoomBloc,
+          listener: (context, state) {
+            if (state is BookroomSuccessState) {
+              //Do Something here
+            } else if (state is BookroomFailedState) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
+            }
           },
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.yellow[600],
-          ),
-          child: const Text("Book Now"),
+          builder: (context, state) {
+            return TextButton(
+              onPressed: () {
+                //check if auth bloc login success
+                //if true call booking api
+                //else open auth modal
+                LoginState loginState =
+                    BlocProvider.of<LoginBloc>(context).state;
+                if (loginState is LoginSuccessState) {
+                  //booking api call
+                  final dateFormat = DateFormat('dd-MM-yyyy');
+                  bookRoomBloc.add(FetchBookRoomEvent(
+                      roomId: room.roomId as int,
+                      date: dateFormat.format(DateTime.now())));
+                } else {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                            child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: AuthPage()));
+                      });
+                }
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.yellow[600],
+              ),
+              child: const Text("Book Now"),
+            );
+          },
         )
       ]),
     );

@@ -1,5 +1,6 @@
 import 'package:bookingapp/api/response/hotel_details_response.dart';
 import 'package:bookingapp/core/constant/palette.dart';
+import 'package:bookingapp/presentation/blocs/book_room/book_room_bloc.dart';
 import 'package:bookingapp/presentation/blocs/hotel_details/hotel_details_bloc.dart';
 import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
 import 'package:bookingapp/presentation/pages/hotel_details/widgets/help_support.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HotelDetailsPage extends StatelessWidget {
+
   const HotelDetailsPage({Key? key}) : super(key: key);
 
   @override
@@ -50,11 +52,9 @@ class HotelDetailsPage extends StatelessWidget {
                       ],
                     );
                   }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: const [CircularProgressIndicator()],
+                  return const SizedBox(
+                    height: 300,
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 },
               )

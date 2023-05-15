@@ -10,9 +10,12 @@ part 'signup_state.dart';
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
   final ApiBridge apiBridge = GetIt.I.get<ApiBridge>();
   SignupBloc() : super(SignupInitial()) {
-    on<SignupEvent>((event, emit) {
-      // TODO: implement event handler
+    on<SignupEvent>((event, emit) {});
+    on<FetchSignupEvent>((event, emit) async {
+      emit(SignupLoadingState());
+      SignupResponse signupResponse = await apiBridge.signup(
+          event.customerName, event.phone, event.password, event.dob);
+      emit(SignupSuccessState(signupResponse: signupResponse));
     });
-    on<FetchSignupEvent>((event, emit) {});
   }
 }

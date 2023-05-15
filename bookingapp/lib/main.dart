@@ -1,13 +1,23 @@
 import 'package:bookingapp/core/dependency.dart';
 import 'package:bookingapp/presentation/blocs/hotel_details/hotel_details_bloc.dart';
 import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
+import 'package:bookingapp/presentation/blocs/login/login_bloc.dart';
 import 'package:bookingapp/presentation/blocs/search_city/search_city_bloc.dart';
+import 'package:bookingapp/presentation/blocs/signup/signup_bloc.dart';
 import 'package:bookingapp/routes.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: HydratedStorage.webStorageDirectory
+      //  kIsWeb
+      //     ?
+      //     : await getTemporaryDirectory(),
+      );
   await setupDependencies();
   runApp(const MyApp());
 }
@@ -23,6 +33,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => SearchCityBloc()),
         BlocProvider(create: (context) => ListhotelsBloc()),
         BlocProvider(create: (context) => HotelDetailsBloc()),
+        BlocProvider(create: (context) => SignupBloc()),
+        BlocProvider(create: (context) => LoginBloc()),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

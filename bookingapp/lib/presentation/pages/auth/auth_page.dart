@@ -1,12 +1,19 @@
+import 'package:bookingapp/presentation/blocs/login/login_bloc.dart';
+import 'package:bookingapp/presentation/blocs/signup/signup_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-class JsonFormModal extends StatefulWidget {
+class AuthPage extends StatefulWidget {
+  int? index;
+
+  AuthPage({super.key, this.index = 0});
+
   @override
-  _JsonFormModalState createState() => _JsonFormModalState();
+  _AuthPageState createState() => _AuthPageState();
 }
 
-class _JsonFormModalState extends State<JsonFormModal>
+class _AuthPageState extends State<AuthPage>
     with SingleTickerProviderStateMixin {
   final _registrationFormKey = GlobalKey<FormState>();
   final _loginFormKey = GlobalKey<FormState>();
@@ -14,7 +21,8 @@ class _JsonFormModalState extends State<JsonFormModal>
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _loginPhoneController = TextEditingController();
-  final TextEditingController _loginPasswordController = TextEditingController();
+  final TextEditingController _loginPasswordController =
+      TextEditingController();
   DateTime _dob = DateTime.now();
 
   late TabController _tabController;
@@ -23,6 +31,7 @@ class _JsonFormModalState extends State<JsonFormModal>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.animateTo(widget.index as int);
   }
 
   @override
@@ -38,12 +47,17 @@ class _JsonFormModalState extends State<JsonFormModal>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('JSON Form Modal'),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.close)),
+        title: const Text('Register / Login'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
-            const Tab(text: 'Register'),
-            const Tab(text: 'Login'),
+          tabs: const [
+            Tab(text: 'Register'),
+            Tab(text: 'Login'),
           ],
         ),
       ),
@@ -63,8 +77,8 @@ class _JsonFormModalState extends State<JsonFormModal>
       child: Form(
         key: _loginFormKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.max,
           children: [
             TextFormField(
               controller: _loginPhoneController,
@@ -92,19 +106,32 @@ class _JsonFormModalState extends State<JsonFormModal>
               },
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                if (_loginFormKey.currentState!.validate()) {
-                  // Do something with the login data
-                  Map<String, dynamic> loginData = {
-                    'phone': _loginPhoneController.text,
-                    'password': _loginPasswordController.text,
-                  };
-                  // Do something with the form data
-                  print(loginData);
+            BlocConsumer<LoginBloc, LoginState>(
+              listener: (context, loginState) {
+                if (loginState is LoginSuccessState) {
+                  Navigator.pop(context);
                 }
               },
-              child: const Text('Login'),
+              builder: (context, loginState) {
+                if (loginState is LoginLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (loginState is LoginFailedState) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Login Failed."),
+                  ));
+                }
+                return ElevatedButton(
+                  onPressed: () {
+                    if (_loginFormKey.currentState!.validate()) {
+                      BlocProvider.of<LoginBloc>(context).add(FetchLoginEvent(
+                        phone: _loginPhoneController.text,
+                        password: _loginPasswordController.text,
+                      ));
+                    }
+                  },
+                  child: const Text('Login'),
+                );
+              },
             ),
           ],
         ),
@@ -118,8 +145,8 @@ class _JsonFormModalState extends State<JsonFormModal>
       child: Form(
         key: _registrationFormKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.max,
           children: [
             TextFormField(
               controller: _phoneController,
@@ -186,20 +213,38 @@ class _JsonFormModalState extends State<JsonFormModal>
               ),
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                if (_registrationFormKey.currentState!.validate()) {
-                  Map<String, dynamic> formData = {
-                    'phone': _phoneController.text,
-                    'password': _passwordController.text,
-                    'customerName': _nameController.text,
-                    'dob': DateFormat.yMd().format(_dob),
-                  };
-                  // Do something with the form data
-                  print(formData);
+            BlocConsumer<SignupBloc, SignupState>(
+              listener: (context, state) {
+                if (state is SignupSuccessState) {
+                  _tabController.animateTo(1);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Registeration Successfull.Please Login"),
+                  ));
+                } else if (state is SignupFailedState) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Registeration Failed."),
+                  ));
                 }
               },
-              child: const Text('Submit'),
+              builder: (context, signupState) {
+                if (signupState is SignupLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return ElevatedButton(
+                  onPressed: () {
+                    final dateFormat = DateFormat('dd-MM-yyyy');
+                    if (_registrationFormKey.currentState!.validate()) {
+                      BlocProvider.of<SignupBloc>(context).add(FetchSignupEvent(
+                          customerName: _nameController.text,
+                          phone: _phoneController.text,
+                          password: _passwordController.text,
+                          dob: dateFormat.format(_dob)));
+                    }
+                  },
+                  child: const Text('Submit'),
+                );
+              },
             ),
           ],
         ),
