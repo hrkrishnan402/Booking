@@ -4,6 +4,7 @@ import 'package:bookingapp/presentation/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
+  
   const HomePage({Key? key}) : super(key: key);
 
   @override

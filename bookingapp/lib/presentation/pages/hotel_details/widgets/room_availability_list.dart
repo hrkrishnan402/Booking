@@ -136,7 +136,7 @@ class _RoomAvailabilityListState extends State<RoomAvailabilityList> {
                   .copyWith(fontWeight: FontWeight.bold),
               children: amnieteis
                   .map((e) => TextSpan(
-                        text: e + " ",
+                        text: "$e ",
                         style: Theme.of(context)
                             .textTheme
                             .subtitle2!
