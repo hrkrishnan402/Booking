@@ -14,11 +14,7 @@ class HotelListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (city == null) {
-      BlocProvider.of<SearchCityBloc>(context)
-          .add(SearchCityKeywordEvent(city: city, keyword: keyword as String));
-    }
-
+  
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: [
