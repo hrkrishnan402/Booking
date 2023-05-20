@@ -6,5 +6,6 @@ abstract class ListhotelsEvent {}
 
 class GetHotelListEvent extends ListhotelsEvent {
   final String keyword;
-  GetHotelListEvent({required this.keyword});
+  final City? city;
+  GetHotelListEvent({required this.keyword,required this.city});
 }

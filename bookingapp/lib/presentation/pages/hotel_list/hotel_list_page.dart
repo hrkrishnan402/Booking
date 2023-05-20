@@ -1,3 +1,4 @@
+import 'package:bookingapp/api/response/model/city.dart';
 import 'package:bookingapp/core/constant/palette.dart';
 import 'package:bookingapp/presentation/blocs/hotel_list/listhotels_bloc.dart';
 import 'package:bookingapp/presentation/blocs/search_city/search_city_bloc.dart';
@@ -8,12 +9,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HotelListPage extends StatelessWidget {
   final String? keyword;
-  const HotelListPage({Key? key, this.keyword=""}) : super(key: key);
+  City? city;
+  HotelListPage({Key? key, this.keyword = "", this.city}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<SearchCityBloc>(context)
-        .add(SearchCityKeywordEvent(keyword: keyword as String));
+    if (city == null) {
+      BlocProvider.of<SearchCityBloc>(context)
+          .add(SearchCityKeywordEvent(city: city, keyword: keyword as String));
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: [
@@ -22,17 +27,38 @@ class HotelListPage extends StatelessWidget {
             children: [
               Container(
                 height: 300,
-                color:Palette.teritiary,
+                color: Palette.teritiary,
               ),
               Container(
-                margin:  const EdgeInsets.symmetric(vertical: 30.0,horizontal: 120),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 30.0, horizontal: 120),
                 color: Palette.onPrimary,
-                child: BlocBuilder<ListhotelsBloc, ListhotelsState>(
-                  builder: (context, state) {
-                    return HotelListWidget(
-                      initDataBloc: () {
-                        BlocProvider.of<ListhotelsBloc>(context)
-                            .add(GetHotelListEvent(keyword: keyword as String));
+                child: BlocBuilder<SearchCityBloc, SearchCityState>(
+                  builder: (context, serachCityState) {
+                    return BlocBuilder<ListhotelsBloc, ListhotelsState>(
+                      builder: (context, state) {
+                        if (serachCityState is SearchCitySuccessState) {
+                          return HotelListWidget(
+                            initDataBloc: () {
+                              BlocProvider.of<ListhotelsBloc>(context).add(
+                                  GetHotelListEvent(
+                                      city: city ??
+                                          (serachCityState.searchCityResponse
+                                                  .cities!.isNotEmpty
+                                              ? serachCityState
+                                                  .searchCityResponse.cities![0]
+                                              : null),
+                                      keyword: city == null
+                                          ? serachCityState
+                                              .searchCityResponse.cities![0].id
+                                              .toString()
+                                          : keyword as String));
+                            },
+                          );
+                        }
+                        return const SizedBox(
+                          child: Text("Loading"),
+                        );
                       },
                     );
                   },

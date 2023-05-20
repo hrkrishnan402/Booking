@@ -7,7 +7,8 @@ class ListhotelsInitial extends ListhotelsState {}
 
 class ListHotelsSuccessState extends ListhotelsState{
   final HotelListResponse listHotelsResponse;
-  ListHotelsSuccessState({required this.listHotelsResponse});
+  final City? city;
+  ListHotelsSuccessState({required this.listHotelsResponse ,required this.city});
 }
 
 class ListHotelsLoadingState extends ListhotelsState {}

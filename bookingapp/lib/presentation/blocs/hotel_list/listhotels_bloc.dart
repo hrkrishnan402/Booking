@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:bloc/bloc.dart';
+import 'package:bookingapp/api/response/model/city.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 
@@ -20,7 +21,9 @@ class ListhotelsBloc extends Bloc<GetHotelListEvent, ListhotelsState> {
           emit(ListHotelsLoadingState());
           HotelListResponse searchCityResponse =
               await apiBridge.fetchHotelList(event.keyword);
-          emit(ListHotelsSuccessState(listHotelsResponse: searchCityResponse));
+          emit(ListHotelsSuccessState(listHotelsResponse: searchCityResponse,
+          city: event.city
+          ));
         } on ApiException catch (e) {
           emit(
               ListHotelsFailedState(statusCode: e.code, message: e.toString()));

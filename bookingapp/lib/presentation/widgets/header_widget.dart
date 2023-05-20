@@ -123,7 +123,9 @@ class HeaderWidget extends StatelessWidget {
       builder: (context, state) {
         return SizedBox(
           child: Autocomplete(
-            initialValue: state is SearchCitySuccessState?TextEditingValue(text: state.selectedCity.displayName):const TextEditingValue(text: ""),
+            initialValue: state is SearchCitySuccessState
+                ? TextEditingValue(text: state.selectedCity.displayName)
+                : const TextEditingValue(text: ""),
             optionsViewBuilder: (BuildContext context,
                 AutocompleteOnSelected<City> onSelected,
                 Iterable<City> options) {
@@ -218,10 +220,15 @@ class HeaderWidget extends StatelessWidget {
             },
             onSelected: (selection) {
               Logger().w(selection);
-              BlocProvider.of<ListhotelsBloc>(context)
-                  .add(GetHotelListEvent(keyword: selection.id.toString()));
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                return  HotelListPage(
+              BlocProvider.of<SearchCityBloc>(context).add(
+                  SelectCityKeywordEvent(
+                      city: selection, keyword: selection.id.toString()));
+              BlocProvider.of<ListhotelsBloc>(context).add(GetHotelListEvent(
+                  city: selection, keyword: selection.id.toString()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) {
+                return HotelListPage(
+                  city: selection,
                   keyword: selection.id.toString(),
                 );
               }));

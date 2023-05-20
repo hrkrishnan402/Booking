@@ -20,7 +20,7 @@ class SearchCityBloc extends Bloc<SearchCityEvent, SearchCityState> {
           emit(SearchCityLoadingState());
           SearchCityResponse searchCityResponse =
               await apiBridge.fetchCities(event.keyword);
-          if (searchCityResponse.cities!.isNotEmpty) {
+          if (searchCityResponse.cities!.isNotEmpty && event.city == null) {
             emit(SearchCitySuccessState(
                 searchCityResponse: searchCityResponse,
                 selectedCity: searchCityResponse.cities![0]));
@@ -31,5 +31,27 @@ class SearchCityBloc extends Bloc<SearchCityEvent, SearchCityState> {
         }
       },
     );
+    on<SelectCityKeywordEvent>(
+      (event, emit) async {
+        try {
+          SearchCitySuccessState searchCitySuccessState =
+              state as SearchCitySuccessState;
+          emit(SearchCitySuccessState(
+              searchCityResponse: searchCitySuccessState.searchCityResponse,
+              selectedCity: event.city as City));
+        } on ApiException catch (e) {
+          emit(
+              SearchCityFailedState(statusCode: e.code, message: e.toString()));
+        }
+      },
+    );
   }
 }
+
+  // on<SelectCityKeywordEvent>(event, emit) async {
+  //     SearchCityResponse searchCityResponse =
+  //         await apiBridge.fetchCities(event.keyword);
+      // emit(SearchCitySuccessState(
+      //     searchCityResponse: searchCityResponse,
+      //     selectedCity: event.city as City));
+  //   }

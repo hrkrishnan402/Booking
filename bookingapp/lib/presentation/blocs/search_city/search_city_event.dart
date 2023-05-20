@@ -6,5 +6,12 @@ abstract class SearchCityEvent {}
 
 class SearchCityKeywordEvent extends SearchCityEvent {
   final String keyword;
-  SearchCityKeywordEvent({required this.keyword});
+ City? city;
+  SearchCityKeywordEvent({required this.keyword ,  this.city });
+}
+
+class SelectCityKeywordEvent extends SearchCityEvent {
+  final String keyword;
+ City? city;
+  SelectCityKeywordEvent({required this.keyword ,  this.city });
 }
