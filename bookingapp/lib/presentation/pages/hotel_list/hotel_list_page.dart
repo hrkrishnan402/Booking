@@ -7,12 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HotelListPage extends StatelessWidget {
-  const HotelListPage({Key? key}) : super(key: key);
+  final String? keyword;
+  const HotelListPage({Key? key, this.keyword=""}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<SearchCityBloc>(context)
-        .add(SearchCityKeywordEvent(keyword: ""));
+        .add(SearchCityKeywordEvent(keyword: keyword as String));
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(children: [
@@ -31,7 +32,7 @@ class HotelListPage extends StatelessWidget {
                     return HotelListWidget(
                       initDataBloc: () {
                         BlocProvider.of<ListhotelsBloc>(context)
-                            .add(GetHotelListEvent(keyword: "207"));
+                            .add(GetHotelListEvent(keyword: keyword as String));
                       },
                     );
                   },

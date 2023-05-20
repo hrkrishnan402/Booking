@@ -39,7 +39,7 @@ class QueryResourceService extends IQueryResourceService {
   Future<HotelListResponse> fetchHotelList(
       ListHotelRequest searchCityRequest) async {
     final path =
-        "${ApiConfig.appApiUrl}hotels?city=${searchCityRequest.keyword}&page=0&required_rooms=0";
+        "${ApiConfig.appApiUrl}hotels?city=${searchCityRequest.keyword}&page=0&required_rooms=1";
     Response response = await apiClient.invokeAPI(path, 'GET',
         body: searchCityRequest,
         headerParams: {"Content-Type": "application/json"});

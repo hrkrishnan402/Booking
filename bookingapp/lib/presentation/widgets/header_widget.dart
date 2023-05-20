@@ -7,6 +7,7 @@ import 'package:bookingapp/presentation/pages/auth/auth_page.dart';
 import 'package:bookingapp/presentation/pages/hotel_list/hotel_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 
 class HeaderWidget extends StatelessWidget {
   HeaderWidget({
@@ -216,10 +217,13 @@ class HeaderWidget extends StatelessWidget {
               );
             },
             onSelected: (selection) {
+              Logger().w(selection);
               BlocProvider.of<ListhotelsBloc>(context)
                   .add(GetHotelListEvent(keyword: selection.id.toString()));
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                return const HotelListPage();
+                return  HotelListPage(
+                  keyword: selection.id.toString(),
+                );
               }));
             },
           ),

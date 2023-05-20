@@ -20,9 +20,11 @@ class SearchCityBloc extends Bloc<SearchCityEvent, SearchCityState> {
           emit(SearchCityLoadingState());
           SearchCityResponse searchCityResponse =
               await apiBridge.fetchCities(event.keyword);
-          emit(SearchCitySuccessState(
-              searchCityResponse: searchCityResponse,
-              selectedCity: searchCityResponse.cities![0]));
+          if (searchCityResponse.cities!.isNotEmpty) {
+            emit(SearchCitySuccessState(
+                searchCityResponse: searchCityResponse,
+                selectedCity: searchCityResponse.cities![0]));
+          }
         } on ApiException catch (e) {
           emit(
               SearchCityFailedState(statusCode: e.code, message: e.toString()));
