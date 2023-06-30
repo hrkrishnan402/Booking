@@ -17,4 +17,5 @@ class Palette {
   static Color HEADER_SIGNIN_BTN_TEXT_COLOR = buttonText;
   static Color HEADER_SIGNUP_BTN_COLOR = primary;
   static Color HEADER_SIGNUP_BTN_TEXT_COLOR = onPrimary;
+  static Color FOOTER_TEXT_COLOR = onPrimary;
 }
